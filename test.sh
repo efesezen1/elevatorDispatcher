@@ -78,7 +78,14 @@ req() {
 }
 
 body() { cat /tmp/wld_body.json; }
-jq_val() { body | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const o=JSON.parse(d);const k='$1'.split('.');let v=o;k.forEach(p=>v=v[p]);console.log(v??'null')}catch{console.log('PARSE_ERROR')}})"; }
+# Extract a JSON scalar value by key name using grep + sed.
+# Supports dotted paths by extracting the last segment's key.
+# Works for string and numeric/boolean values.
+jq_val() {
+  local key
+  key="${1##*.}"   # take the last segment of a dotted path
+  body | grep -o "\"${key}\":[^,}]*" | head -1 | sed 's/^"[^"]*"://; s/^[[:space:]]*//; s/"//g; s/[[:space:]]*$//'
+}
 
 # ── Server lifecycle ──────────────────────────────────────────────────────────
 start_server() {
