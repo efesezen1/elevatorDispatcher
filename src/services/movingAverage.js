@@ -17,7 +17,7 @@ function smoothedFlow(db, districtId, windowSize) {
         `SELECT flow_lps, recorded_at
          FROM flow_readings
          WHERE meter_id = ?
-         ORDER BY recorded_at DESC
+         ORDER BY recorded_at DESC, id DESC
          LIMIT ?`
       )
       .all(meter.id, n);

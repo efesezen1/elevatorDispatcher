@@ -17,7 +17,7 @@ function computeMassBalance(db, districtId) {
          AND fr.id = (
            SELECT id FROM flow_readings
            WHERE meter_id = m.id
-           ORDER BY recorded_at DESC
+           ORDER BY recorded_at DESC, id DESC
            LIMIT 1
          )`
     )
